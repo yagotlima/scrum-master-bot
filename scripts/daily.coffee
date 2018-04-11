@@ -10,7 +10,7 @@ module.exports = (robot) ->
   robot.listen(
     (message) ->
       currentDaily = robot.brain.get('currentDaily')
-      currentDaily and message.room is currentDaily.res.room and message.user.name is currentDaily.user.substr(1)
+      currentDaily and message.room is currentDaily.res.message.room and message.user.name is currentDaily.user.substr(1)
     (res) ->
       currentDaily = robot.brain.get('currentDaily')
       nextQuestion = currentDaily.nextQuestion()
