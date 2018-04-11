@@ -1,0 +1,11 @@
+version: '2.1'
+services:
+  bot:
+    image: yagotlima/scrum-master-bot:0.0.2
+    links:
+      - redis
+    environment:
+      REDIS_URL: "redis://redis:6379/scrum-master-bot"
+      HUBOT_SLACK_TOKEN_FILE: hubot-slack-token.env
+  redis:
+    image: "redis:4-alpine"

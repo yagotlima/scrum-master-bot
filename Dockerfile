@@ -6,7 +6,6 @@ WORKDIR /app
 
 COPY bin bin
 COPY scripts scripts
-COPY package.json external-scripts.json hubot-scripts.json ./
+COPY package.json external-scripts.json hubot-scripts.json hubot-slack-token.env ./
 
-ENTRYPOINT ["./bin/hubot"]
-CMD ["--adapter", "slack"]
+ENTRYPOINT ["./bin/docker-entrypoint.sh"]
