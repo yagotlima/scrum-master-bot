@@ -1,9 +1,9 @@
 {
-  "name": "yoda",
+  "name": "scrum-master",
   "version": "0.0.0",
   "private": true,
   "author": "yago@ypoos.com",
-  "description": "Scrum Master Yoda",
+  "description": "Scrum Master",
   "dependencies": {
     "hubot": "^2.19.0",
     "hubot-diagnostics": "0.0.2",
