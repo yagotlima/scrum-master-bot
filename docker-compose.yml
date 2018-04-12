@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2'
 services:
   bot:
     image: yagotlima/scrum-master-bot:0.0.2
