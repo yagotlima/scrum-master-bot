@@ -8,7 +8,11 @@ module.exports = (robot) ->
     pushDaily robot, res, nome for nome in nomes
 
   robot.hear /^cancel daily$/i, (res) ->
-    res.send 'Cancelada a daily está'
+    currentDaily = robot.brain.get('currentDaily')
+    if(finishCurrentDaily(robot))
+      res.send 'Cancelada a daily está'
+    else
+      res.send 'Nenhuma daily fazendo estou'
 
   robot.listen(
     (message) ->
@@ -44,6 +48,9 @@ startDaily = (robot, daily) ->
   , 500
 
 finishCurrentDaily = (robot) ->
+  currentDaily = robot.brain.get('currentDaily')
+  if(!currentDaily)
+    return false
   dailyQueue = robot.brain.get('dailyQueue')
   nextDaily = dailyQueue.shift()
   robot.brain.set('dailyQueue', dailyQueue)
@@ -51,12 +58,10 @@ finishCurrentDaily = (robot) ->
     startDaily(robot, nextDaily)
   else
     robot.brain.set('currentDaily', null)
+  true
 
 farewellMessage = (robot, res, daily) ->
   res.send "#{daily.user}: obrigado pequeno padawan"
-
-cancelCurrentDaily = (robot) ->
-  finishCurrentDaily(robot)
 
 class Daily
   @questions: ["ontem o que fez você?", "alguma dificuldade você teve?", "hoje o que fazer vai?"]
