@@ -3,6 +3,24 @@ module.exports = (robot) ->
   if(!robot.brain.get('dailyQueue'))
     robot.brain.set('dailyQueue', [])
 
+  if(!robot.brain.get('roomnames'))
+    robot.brain.set('roomNames', {})
+
+  robot.respond /roomname for (.*) is (.*)$/i, (res) ->
+    id = res.match[1]
+    name = res.match[2]
+    roomNames = robot.brain.get('roomNames')
+    roomNames[name] = id
+    robot.brain.set('roomNames', roomNames)
+    res.reply 'Roomname saved'
+
+  robot.respond /roomnames$/i, (res) ->
+    roomNames = robot.brain.get('roomNames')
+    if(Object.keys(roomNames).length is 0)
+      res.reply 'No roomnames'
+    else
+      replyRoomName res, id, name for id, name of roomNames
+
   robot.hear /^daily for (.*)/i, (res) ->
     nomes = res.match[1].split(' ')
     pushDaily robot, res, nome for nome in nomes
@@ -17,7 +35,7 @@ module.exports = (robot) ->
   robot.listen(
     (message) ->
       currentDaily = robot.brain.get('currentDaily')
-      currentDaily and message.room is currentDaily.res.message.room and message.user.name is currentDaily.user.substr(1)
+      currentDaily and message.room in currentDaily.roomNames and message.user.name is currentDaily.user.substr(1)
     (res) ->
       currentDaily = robot.brain.get('currentDaily')
       nextQuestion = currentDaily.nextQuestion()
@@ -27,6 +45,9 @@ module.exports = (robot) ->
         farewellMessage(robot, res, currentDaily)
         finishCurrentDaily(robot)
   )
+
+replyRoomName = (res, id, name) ->
+  res.reply "#{id}: #{name}"
 
 pushDaily = (robot, res, user) ->
   daily = new Daily(res, user)
@@ -67,6 +88,13 @@ class Daily
   @questions: ["ontem o que fez você?", "alguma dificuldade você teve?", "hoje o que fazer vai?"]
   constructor: (@res, @user) ->
     @questionIndex = 0
+    @roomNames = []
+    knownRoomNames = @res.robot.brain.get('roomNames')
+    room = @res.message.room
+    @roomNames.push(room)
+    room = knownRoomNames[room]
+    if room
+      @roomNames.push(room)
 
   nextQuestion: ->
     Daily.questions[@questionIndex++]
