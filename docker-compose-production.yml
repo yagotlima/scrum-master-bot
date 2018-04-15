@@ -1,7 +1,7 @@
 version: '2'
 services:
   bot:
-    build: .
+    image: yagotlima/scrum-master-bot:latest
     links:
       - redis
     environment:
@@ -15,3 +15,5 @@ services:
 
 volumes:
   redis-data:
+    driver: rancher-nfs
+    onRemove: retain
