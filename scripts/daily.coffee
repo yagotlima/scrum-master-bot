@@ -1,10 +1,11 @@
 
 module.exports = (robot) ->
-  if(!robot.brain.get('dailyQueue'))
-    robot.brain.set('dailyQueue', [])
+  robot.brain.on 'loaded', ->
+    if(!robot.brain.get('dailyQueue'))
+      robot.brain.set('dailyQueue', [])
 
-  if(!robot.brain.get('roomnames'))
-    robot.brain.set('roomNames', {})
+    if(!robot.brain.get('roomNames'))
+      robot.brain.set('roomNames', {})
 
   robot.respond /roomname for (.*) is (.*)$/i, (res) ->
     id = res.match[1]
