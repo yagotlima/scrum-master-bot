@@ -1,3 +1,4 @@
+sem = require('semaphore')(1);
 
 module.exports = (robot) ->
   robot.brain.on 'loaded', ->
@@ -52,13 +53,15 @@ replyRoomName = (res, id, name) ->
 
 pushDaily = (robot, res, user) ->
   daily = new Daily(res, user)
-  currentDaily = robot.brain.get('currentDaily')
-  if(currentDaily)
-    dailyQueue = robot.brain.get('dailyQueue')
-    dailyQueue.push(daily)
-    robot.brain.set('dailyQueue', dailyQueue)
-  else
-    startDaily(robot, daily)
+  sem.take () ->
+    currentDaily = robot.brain.get('currentDaily')
+    if(currentDaily)
+      dailyQueue = robot.brain.get('dailyQueue')
+      dailyQueue.push(daily)
+      robot.brain.set('dailyQueue', dailyQueue)
+    else
+      startDaily(robot, daily)
+    sem.leave()
 
 startDaily = (robot, daily) ->
   setTimeout () ->
